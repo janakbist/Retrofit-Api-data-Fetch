@@ -33,17 +33,14 @@ class MainActivity : AppCompatActivity() {
             binding.progressBar.isVisible = true
             var cacheInterceptor = CacheInterceptor(this@MainActivity)
             val response = try {
-
                 if (!NetworkUtils.hasNetwork()) {
-                    Log.i("Internet :  ","no Internet connection")
-                    Toast.makeText(getApplicationContext(),"This a Api cache message", Toast.LENGTH_LONG).show()
+                    Toast.makeText(getApplicationContext(),"Internet Connection is not Available : Data fetched from cache", Toast.LENGTH_LONG).show()
                     cacheInterceptor.apiCache.getTodos()
-
                 }
                 else {
-                    Log.i("Api Data","Data from api")
                     RetrofitInstance.api.getTodos()
                 }
+
             } catch(e: IOException) {
                 Log.e(TAG, "IOException, you might not have internet connection and no cache exist")
                 binding.progressBar.isVisible = false

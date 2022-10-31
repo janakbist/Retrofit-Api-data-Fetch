@@ -15,27 +15,27 @@ class CacheInterceptor(context: Context) {
 
     private  val BIG_CACHE_PATH = "Todo-api-path"
 
-//    val myCache = Cache(context.cacheDir, cacheSize)
 
     val HEADER_CACHE_CONTROL = "Cache-Control"
     val HEADER_PRAGMA = "Pragma"
 
-    /*val okHttpClient = offlineInterceptor(context)?.let {
-        OkHttpClient.Builder()
-            .cache(createCache(context))
-            .addNetworkInterceptor(ResponseCacheInterceptor())
-            .addInterceptor(it)
-            .build()
-    }*/
 
-    val okHttpClient = OkHttpClient.Builder()
+    val okHttpClient = offlineInterceptor(context)?.let {
+        OkHttpClient.Builder()
         .readTimeout(120, TimeUnit.SECONDS)
         .connectTimeout(120, TimeUnit.SECONDS)
         .cache(createCache(MyApplication.getInstance()))
         .addInterceptor(ResponseCacheInterceptor())
-        .addInterceptor(OfflineResponseCacheInterceptor(MyApplication.getInstance()))
+        .addInterceptor(it)
         .build()
-
+    }
+    /**
+     * Interceptor to cache data and maintain it for four weeks.
+     *
+     *Max stale is must for ofline intercepto
+     * If the device is offline, stale (at most four weeks old)
+     * response is fetched from the cache.
+     */
     private fun offlineInterceptor(context: Context): Interceptor? {
         return Interceptor { chain ->
             Log.d("Tag", "offline interceptor: called.")
@@ -56,16 +56,16 @@ class CacheInterceptor(context: Context) {
         }
     }
 
-    private fun createCache(context: Context): Cache? {
-        return Cache(File(context.applicationContext.cacheDir, BIG_CACHE_PATH), cacheSize)
-    }
     val apiCache: TodoApi by lazy {
         Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com")
+            .baseUrl("https://api.thedogapi.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
             .create(TodoApi::class.java)
+    }
+    private fun createCache(context: Context): Cache? {
+        return Cache(File(context.applicationContext.cacheDir, BIG_CACHE_PATH), cacheSize)
     }
 }
 
@@ -88,24 +88,5 @@ class ResponseCacheInterceptor : Interceptor {
     }
 }
 
-/**
- * Interceptor to cache data and maintain it for four weeks.
- *
- *
- * If the device is offline, stale (at most four weeks old)
- * response is fetched from the cache.
- */
-class OfflineResponseCacheInterceptor(private val mContext: Context) : Interceptor {
-    @Throws(IOException::class)
-    override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request()
-        if (!mContext.hasNetwork()) {
-            request = request.newBuilder()
-                .removeHeader("Pragma")
-                .header("Cache-Control", "public, only-if-cached")
-                .build()
-        }
-        return chain.proceed(request)
-    }
-}
+
 
