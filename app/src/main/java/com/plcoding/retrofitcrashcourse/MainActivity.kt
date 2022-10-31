@@ -1,8 +1,13 @@
 package com.plcoding.retrofitcrashcourse
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.net.http.HttpResponseCache
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,10 +31,21 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenCreated {
             binding.progressBar.isVisible = true
+            var cacheInterceptor = CacheInterceptor(this@MainActivity)
             val response = try {
-                RetrofitInstance.api.getTodos()
+
+                if (!NetworkUtils.hasNetwork()) {
+                    Log.i("Internet :  ","no Internet connection")
+                    Toast.makeText(getApplicationContext(),"This a Api cache message", Toast.LENGTH_LONG).show()
+                    cacheInterceptor.apiCache.getTodos()
+
+                }
+                else {
+                    Log.i("Api Data","Data from api")
+                    RetrofitInstance.api.getTodos()
+                }
             } catch(e: IOException) {
-                Log.e(TAG, "IOException, you might not have internet connection")
+                Log.e(TAG, "IOException, you might not have internet connection and no cache exist")
                 binding.progressBar.isVisible = false
                 return@launchWhenCreated
             } catch (e: HttpException) {
@@ -37,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 binding.progressBar.isVisible = false
                 return@launchWhenCreated
             }
-            if(response.isSuccessful && response.body() != null) {
+            if(response.isSuccessful && response.body() != null ) {
                 todoAdapter.todos = response.body()!!
             } else {
                 Log.e(TAG, "Response not successful")
@@ -51,4 +67,5 @@ class MainActivity : AppCompatActivity() {
         adapter = todoAdapter
         layoutManager = LinearLayoutManager(this@MainActivity)
     }
+
 }
