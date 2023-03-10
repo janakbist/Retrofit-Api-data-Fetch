@@ -2,10 +2,12 @@ package com.plcoding.retrofitcrashcourse
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.plcoding.retrofitcrashcourse.databinding.ItemTodoBinding
+import com.squareup.picasso.Picasso
 
 class TodoAdapter : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
@@ -36,11 +38,15 @@ class TodoAdapter : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
             false
         ))
     }
-
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.binding.apply {
             val todo = todos[position]
             tvTitle.text = todo.name
+
+            val imageView: ImageView =image
+            val imageFromApi = todo.image.url
+            Picasso.get().load(imageFromApi).into(imageView)
+
             cbDone.isChecked = todo.completed
         }
     }

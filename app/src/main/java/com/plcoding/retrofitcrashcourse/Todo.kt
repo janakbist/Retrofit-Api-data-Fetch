@@ -8,5 +8,13 @@ data class Todo(
     val id: Int,
     val title: String,
     val userId: Int,
-    val name : String
+    val name : String,
+    val image: Image,
+
+)
+data class Image(
+    val height: Int,
+    val id: String,
+    var url: String,
+    val width: Int
 )

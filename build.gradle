@@ -1,9 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.4.20"
+    ext.kotlin_version = "1.6.0"
     repositories {
         google()
         jcenter()
+        mavenCentral()
+        flatDir {
+            dirs("libs")
+        }
+        maven { url = uri("https://artifacts.applovin.com/android") }
+        dependencies {
+            classpath ("com.applovin.quality:AppLovinQualityServiceGradlePlugin:+")
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.1"

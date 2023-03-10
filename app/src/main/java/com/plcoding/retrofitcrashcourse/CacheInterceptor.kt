@@ -14,8 +14,6 @@ class CacheInterceptor(context: Context) {
     val cacheSize = (5 * 1024 * 1024).toLong()
 
     private  val BIG_CACHE_PATH = "Todo-api-path"
-
-
     val HEADER_CACHE_CONTROL = "Cache-Control"
     val HEADER_PRAGMA = "Pragma"
 

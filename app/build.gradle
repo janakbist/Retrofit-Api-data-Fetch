@@ -1,8 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'applovin-quality-service'
 }
-
+applovin {
+    apiKey = "Sw04gpOStUfQlMiL49dtq9m40wedbUUa8QTRGPe5ymp5xXdlQB6qNKqf52ynwmkngT472lnRLoS3i4_I5xL978"
+}
 android {
     compileSdkVersion 32
     buildToolsVersion "30.0.2"
@@ -33,7 +36,11 @@ android {
         jvmTarget = '1.8'
     }
 }
-
+//for AppLovin
+repositories {
+    google()
+    mavenCentral()
+}
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -60,6 +67,13 @@ dependencies {
 
     //Interceptor
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    //picaso
+    implementation 'com.squareup.picasso:picasso:2.8'
+
+    //AppLovin for add
+    implementation("com.applovin:applovin-sdk:x.y.z@aar")
+    implementation 'com.google.android.gms:play-services-ads:21.3.0'
+    implementation 'com.google.ads.mediation:applovin:11.5.3.1'
 
 }
 
